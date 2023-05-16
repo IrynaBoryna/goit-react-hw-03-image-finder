@@ -20,16 +20,23 @@ export class ImageGallery extends Component {
   async componentDidUpdate(prevProps, prevState) {
     if (prevProps.queryValue !== this.props.queryValue) {
       this.setState({ images: '' });
-      this.setState({ isLoading: true });
+      this.setState({ pageNumber: 1 });
+       this.setState({ isLoading: true });
       try {
-        const response = await fetchImagesWithQuery(1, this.props.queryValue);
+        const response = await fetchImagesWithQuery(
+          1,
+          this.props.queryValue
+        );
         this.setState(state => ({ images: [...state.images, ...response] }));
-      } catch (error) {
+        } catch (error) {
         this.setState({ error });
       } finally {
         this.setState({ isLoading: false });
-      }
-    } else if (prevState.pageNumber !== this.state.pageNumber) {
+      } 
+    } else if (
+      prevState.pageNumber !== this.state.pageNumber &&
+      this.state.pageNumber > 1
+    ) {
       this.setState({ isLoading: true });
       try {
         const response = await fetchImagesWithQuery(
