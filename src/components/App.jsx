@@ -7,9 +7,8 @@ import { ImageGallery } from './ImageGallery/imageGallery';
 
 export class App extends Component {
   state = {
-    queryValue: '',
+    images: [],
   };
-
   formSubmitValue = queryValue => {
     this.setState({ queryValue });
   };

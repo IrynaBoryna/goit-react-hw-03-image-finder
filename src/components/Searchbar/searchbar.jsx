@@ -18,6 +18,7 @@ export class Searchbar extends Component {
       return toast('Введіть запит');
     }
     this.props.onSubmit(this.state.queryValue);
+    
   };
 
   render() {

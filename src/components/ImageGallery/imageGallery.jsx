@@ -10,26 +10,31 @@ import { Button } from '../Button/button';
 export class ImageGallery extends Component {
   state = {
     images: [],
-    queryValue: '',
     showModal: false,
     isLoading: false,
     error: null,
     pageNumber: 1,
     activeInd: 0,
-   };
+  };
 
   async componentDidUpdate(prevProps, prevState) {
-    if ( prevProps.queryValue !== this.props.queryValue  ) {
-      this.resetForm()
-      }
-    if ( prevProps.queryValue !== this.props.queryValue ||
-      prevState.pageNumber !== this.state.pageNumber
-    ) {
+    if (prevProps.queryValue !== this.props.queryValue) {
+      this.setState({ images: '' });
       this.setState({ isLoading: true });
       try {
-          const response = await fetchImagesWithQuery(
-          this.props.queryValue,
-          this.state.pageNumber
+        const response = await fetchImagesWithQuery(1, this.props.queryValue);
+        this.setState(state => ({ images: [...state.images, ...response] }));
+      } catch (error) {
+        this.setState({ error });
+      } finally {
+        this.setState({ isLoading: false });
+      }
+    } else if (prevState.pageNumber !== this.state.pageNumber) {
+      this.setState({ isLoading: true });
+      try {
+        const response = await fetchImagesWithQuery(
+          this.state.pageNumber,
+          this.props.queryValue
         );
         this.setState(state => ({ images: [...state.images, ...response] }));
       } catch (error) {
@@ -52,14 +57,11 @@ export class ImageGallery extends Component {
   };
 
   onLoadMore = () => {
-    this.setState({ pageNumber: this.state.pageNumber +1})
-   };
-
-  resetForm() {
-    this.setState({ pageNumber: 1 })
-    this.setState({ images: '' }) 
+    this.setState({
+      pageNumber: this.state.pageNumber + 1,
+    });
   };
-  
+
   render() {
     const { images, isLoading, error, showModal } = this.state;
     const imageModal = this.state.images[this.state.activeInd];
@@ -97,7 +99,7 @@ export class ImageGallery extends Component {
 //   tags: PropTypes.string,
 //   webformatURL: PropTypes.string,
 //   id: PropTypes.number,
-//   mages: PropTypes.array,
+//   images: PropTypes.array,
 //   queryValue: PropTypes.string,
 //   showModal: PropTypes.bool,
 //   isLoading: PropTypes.bool,
